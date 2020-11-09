@@ -1,17 +1,16 @@
+import React from 'react';
 
-
-
-
-function PopupWithForm(props) {
+function PopupWithForm({title, name, submitButton, isOpen, onClose, children}) {
 
     return(
-        <div className="popup popup_avatar">
-            <form className="popup__form" name="avatar-popup" noValidate>
-                <button type="button" className="popup__close" aria-label="Закрыть попап"></button>
-                <h2 className="popup__title">Обновить аватар</h2>
-                <input id="avatar-link" type="url" className="popup__input popup__avatar" name="avatar" placeholder="Ссылка на картинку" required/>
-                <span className="popup__error" id="avatar-link-error"></span>
-                <button type="submit" className="popup__button">Сохранить</button>
+        <div className={`popup popup_${name} ${isOpen ? "popup_display-on" : ""}`}>
+            <form className="popup__form" name={name} noValidate>
+                <button type="button" className="popup__close" aria-label="Закрыть попап" onClick={onClose}/>
+                <h2 className="popup__title">
+                    {title}
+                </h2>
+                {children}
+                <button type="submit" className="popup__button">{submitButton}</button>
             </form>
         </div>
     )
