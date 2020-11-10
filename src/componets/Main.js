@@ -1,7 +1,10 @@
 import React from 'react';
 import api from '../utils/Api'
+import Card from "./Card";
+import cardSorting from "../utils/utils";
 
-function Main({onEditProfile, onAddPlace, onEditAvatar}) {
+
+function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
     const [userName, setUserName] = React.useState('')
     const [userDescription, setUserDescription] = React.useState('')
     const [userAvatar, setUserAvatar] = React.useState('')
@@ -16,30 +19,19 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
                 setUserName(name)
                 setUserDescription(about)
                 setUserAvatar(avatar)
-
-                const mewCards = initialCards.map((card) =>
-                    <article className="element">
-                        <button type="button" className="element__delete" disabled/>
-                        <img className="element__image" src={`${card.link}`} alt={card.name}/>
-                        <div className="element__description">
-                            <h2 className="element__caption">{card.name}</h2>
-                            <div className="element__like-wrapper">
-                                <button type="button" className="element__like"/>
-                                <p className="element__like-count">{card.likes.length}</p>
-                            </div>
-                        </div>
-                    </article>
-                )
-
-                setCards([...cards, ...mewCards])
+                initialCards.sort((a, b) => cardSorting(a, b))
+                setCards( initialCards.map((card => ({
+                        id: card._id,
+                        name: card.name,
+                        link: card.link,
+                        likes: card.likes
+                    })))
+                );
             })
             .catch((err) => {
                 console.log(err);
             });
     },[])
-
-
-
 
     return(
         <main className="main">
@@ -58,7 +50,11 @@ function Main({onEditProfile, onAddPlace, onEditAvatar}) {
             </section>
 
             <section className="elements">
-                {cards}
+                {
+                    cards.map(({id, ...props}) =>
+                        < Card key={id} {...props} onCardClick={onCardClick}/>
+                        )
+                }
             </section>
         </main>
     )

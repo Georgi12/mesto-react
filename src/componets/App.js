@@ -13,6 +13,12 @@ function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
+    const [selectedCard, setSelectedCard] = React.useState({})
+
+    const handleCardClick = (link, name) => {
+        console.log(link, name)
+        setSelectedCard({link, name})
+    }
 
     const handleEditAvatarClick = () => {
         setIsEditAvatarPopupOpen(true)
@@ -31,15 +37,17 @@ function App() {
         setIsEditAvatarPopupOpen(false)
         setIsEditProfilePopupOpen(false)
         setIsAddPlacePopupOpen(false)
+        setSelectedCard({})
     }
 
   return (
-      <body className="page">
+      <div className={"page"}>
         < Header />
         < Main
             onAddPlace={handleAddPlaceClick}
             onEditAvatar={handleEditAvatarClick}
             onEditProfile={handleEditProfileClick}
+            onCardClick={handleCardClick}
         />
         < Footer />
         < PopupWithForm
@@ -51,10 +59,7 @@ function App() {
             children={
                 <>
                     <input
-                        id="avatar-link"
-                        type="url"
-                        className="popup__input popup__description"
-                        name="avatar"
+                        id="avatar-link" type="url" className="popup__input popup__description" name="avatar"
                         placeholder="Ссылка на картинку" required
                     />
                     <span className="popup__error" id="avatar-link-error"></span>
@@ -120,13 +125,11 @@ function App() {
             onClose={closeAllPopups}
         />
 
-        < ImagePopup />
-
-
-        <template id="element-template">
-
-        </template>
-      </body>
+        < ImagePopup
+            card={selectedCard}
+            onClose={closeAllPopups}
+        />
+      </div>
   );
 }
 
