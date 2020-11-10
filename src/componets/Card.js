@@ -4,7 +4,7 @@ function Card({name, link, likes, onCardClick}) {
     return(
         <article className="element">
             <button type="button" className="element__delete" disabled/>
-            <img className="element__image" src={`${link}`} alt={name}  onClick={(name, link) => onCardClick(name, link)}/>
+            <img className="element__image" src={`${link}`} alt={name}  onClick={() => onCardClick(name, link)}/>
             <div className="element__description">
                 <h2 className="element__caption">{name}</h2>
                 <div className="element__like-wrapper">

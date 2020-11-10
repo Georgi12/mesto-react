@@ -1,14 +1,18 @@
 import React from 'react';
 
-function ImagePopup(card, onClose) {
-    console.log(card)
+function ImagePopup(props) {
+    const ifClosePopup = () => {
+        return (props.card.link && props.card.name)
+    }
     return(
 
-        <div className={`popup popup_photo-position ${!card ? "popup_display-on" : ""}`}>
+        <div className={`popup popup_photo-position ${ifClosePopup() ? "popup_display-on" : ""}`}>
             <div className="popup__figure">
-                <button type="button" className="popup__close" aria-label="Закрыть попап" onClick={onClose}/>
-                <img className="popup__image" src={card.link} alt={card.name}/>
-                <h2 className="popup__photo-title">{card.name}</h2>
+                <button type="button" className="popup__close" aria-label="Закрыть попап" onClick={props.onClose}/>
+                <img className="popup__image" src={props.card.link} alt={props.card.name}/>
+                <h2 className="popup__photo-title">
+                    {props.card.name}
+                </h2>
             </div>
         </div>
     )
