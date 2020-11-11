@@ -1,7 +1,7 @@
 import React from 'react';
 import api from '../utils/Api'
-import Card from "./Card";
-import cardSorting from "../utils/utils";
+import Card from './Card';
+import cardSorting from '../utils/utils';
 
 
 function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick}) {
