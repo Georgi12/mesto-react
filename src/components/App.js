@@ -10,6 +10,7 @@ import {currentUserContext} from "../contexts/currentUserContexts"
 import {cardContext} from "../contexts/CardContext"
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
+import AddPlacePopup from './AddPlacePopup';
 
 
 function App() {
@@ -53,6 +54,13 @@ function App() {
             closeAllPopups()
         })
     }
+    const handleAddPlaceSubmit = (card) => {
+        api.setCard(card).then((newCard) => {
+            setCards([newCard, ...cards])
+            closeAllPopups()
+        })
+    }
+
     const handleCardClick = ({name, link}) => {
         setSelectedCard({name, link})
     }
@@ -119,28 +127,10 @@ function App() {
                 < EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
                                    onUpdateUser={handleUpdateUserAvatar}
                 />
+                < AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}
+                                  onAddPlace={handleAddPlaceSubmit}
+                />
 
-                < PopupWithForm
-                    name={'place'}
-                    title={'Новое место'}
-                    submitButton={'Сохранить'}
-                    isOpen={isAddPlacePopupOpen}
-                    onClose={closeAllPopups}
-                >
-                    <>
-                        <input
-                            id="place-name" type="text" minLength="1" maxLength="30"
-                            className="popup__input popup__name" name="name" placeholder="Название" required
-                        />
-                        <span className="popup__error" id="place-name-error"></span>
-                        <input
-                            id="place-link" type="url" className="popup__input popup__description" name="link"
-                            placeholder="Ссылка на картинку" required
-                        />
-                        <span className="popup__error" id="place-link-error"></span>
-                    </>
-
-                </PopupWithForm>
 
                 < ImagePopup
                     card={selectedCard}

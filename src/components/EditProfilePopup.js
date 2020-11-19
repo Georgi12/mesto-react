@@ -15,7 +15,6 @@ function EditProfilePopup({isOpen, onClose, onUpdateUser}) {
     }, [currentUser]);
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log(value)
         onUpdateUser(value)
     }
 
