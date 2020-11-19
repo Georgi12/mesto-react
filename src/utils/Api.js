@@ -20,17 +20,10 @@ class Api {
         }
     }
 
-    apiLike(card_id) {
+    apiLike(card_id, isLiked) {
         return fetch(`${this._baseUrl}/cards/likes/${card_id}`, {
             headers: this.headers,
-            method: 'PUT',
-        }).then(res => this._queryHandler(res))
-    }
-
-    apiUnLike(card_id) {
-        return fetch(`${this._baseUrl}/cards/likes/${card_id}`, {
-            headers: this.headers,
-            method: 'DELETE',
+            method: isLiked ? 'PUT': 'DELETE',
         }).then(res => this._queryHandler(res))
     }
 
