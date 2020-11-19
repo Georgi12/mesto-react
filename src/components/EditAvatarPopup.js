@@ -6,17 +6,16 @@ import {currentUserContext} from "../contexts/currentUserContexts";
 function EditAvatarPopup({isOpen, onClose, onUpdateUser}) {
 
     const currentUser = React.useContext(currentUserContext);
-    const [avatar, setAvatar] = React.useState('');
-
+    const avatarRef = React.createRef()
     const handleInputChange = (e) => {
-        setAvatar(e.target.value)
+        avatarRef.current.value = e.target.value
     }
     React.useEffect(() => {
-        setAvatar(currentUser.avatar)
+        avatarRef.current.value = currentUser.avatar
     }, [currentUser]);
     const handleSubmit = (e) => {
         e.preventDefault()
-        onUpdateUser({avatar: avatar})
+        onUpdateUser({avatar: avatarRef.current.value})
     }
 
     return(
@@ -31,7 +30,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateUser}) {
             <>
                 <input
                     id="avatar-link" type="url" className="popup__input popup__description" name="avatar"
-                    placeholder="Ссылка на картинку" required onChange={handleInputChange}
+                    placeholder="Ссылка на картинку" required onChange={handleInputChange} ref={avatarRef}
                 />
                 <span className="popup__error" id="avatar-link-error"></span>
             </>
