@@ -5,9 +5,9 @@ import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-import api from "../utils/Api";
-import {currentUserContext} from "../contexts/currentUserContexts"
-import {cardContext} from "../contexts/CardContext"
+import api from "../utils/api";
+import {CurrentUserContext} from "../contexts/currentUserContexts"
+import {CardContext} from "../contexts/CardContext"
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
@@ -126,8 +126,8 @@ function App() {
 
     return (
         <>
-            <cardContext.Provider value={cards}>
-            <currentUserContext.Provider value={currentUser}>
+            <CardContext.Provider value={cards}>
+            <CurrentUserContext.Provider value={currentUser}>
                 < Header />
                 < Main
                     onAddPlace={handleAddPlaceClick}
@@ -166,8 +166,8 @@ function App() {
 
                 />
 
-            </currentUserContext.Provider>
-            </cardContext.Provider>
+            </CurrentUserContext.Provider>
+            </CardContext.Provider>
         </>
     );
 }
