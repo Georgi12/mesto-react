@@ -26,16 +26,9 @@ function App() {
     React.useEffect(() => {
         Promise.all(
             [api.getProfileInfo(),api.getCards()]
-        ).then(([{name, about, avatar, _id}, initialCards]) => {
-                setCurrentUser({name: name, about: about, avatar: avatar, _id: _id})
-                setCards( initialCards.map((card => ({
-                    _id: card._id,
-                    name: card.name,
-                    link: card.link,
-                    likes: card.likes,
-                    owner: card.owner
-                })))
-            );
+        ).then(([updatedUser, initialCards]) => {
+                setCurrentUser(updatedUser)
+                setCards(initialCards);
             }
         ).catch(err => {
             errorHandler(err)
