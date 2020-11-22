@@ -3,12 +3,10 @@ import Card from './Card';
 import {currentUserContext} from "../contexts/currentUserContexts"
 import {cardContext} from "../contexts/CardContext";
 
-
 function Main({onEditProfile, onAddPlace, onEditAvatar, onCardClick, onCardLike, onCardDelete}) {
 
     const cards  = React.useContext(cardContext)
     const currentUser = React.useContext(currentUserContext)
-
 
     return(
         <main className="main">

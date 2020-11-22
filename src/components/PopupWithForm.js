@@ -1,7 +1,6 @@
 import React from 'react';
 
 function PopupWithForm({title, name, submitButton, isOpen, onClose, onSubmit, children}) {
-    console.log(children)
     return(
         <div className={`popup popup_${name} ${isOpen ? "popup_display-on" : ""}`}>
             <form className="popup__form" name={name} onSubmit={onSubmit} noValidate>

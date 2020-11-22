@@ -15,9 +15,6 @@ import ErrorKeeperPopup from './ErrorKeeperPopup';
 
 
 function App() {
-    React.useEffect(() => {
-        document.body.classList.add('page')
-    },[])
 
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
