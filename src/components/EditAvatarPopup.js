@@ -3,7 +3,7 @@ import React from 'react';
 import PopupWithForm from "./PopupWithForm";
 import {currentUserContext} from "../contexts/currentUserContexts";
 
-function EditAvatarPopup({isOpen, onClose, onUpdateUser}) {
+function EditAvatarPopup({isOpen, onClose, onUpdateAvatar}) {
 
     const currentUser = React.useContext(currentUserContext);
     const avatarRef = React.createRef()
@@ -15,7 +15,7 @@ function EditAvatarPopup({isOpen, onClose, onUpdateUser}) {
     }, [currentUser]);
     const handleSubmit = (e) => {
         e.preventDefault()
-        onUpdateUser({avatar: avatarRef.current.value})
+        onUpdateAvatar({avatar: avatarRef.current.value})
     }
 
     return(

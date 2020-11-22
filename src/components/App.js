@@ -11,6 +11,7 @@ import {cardContext} from "../contexts/CardContext"
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import ErrorKeeperPopup from './ErrorKeeperPopup';
 
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
     const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false)
     const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false)
     const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false)
+    const [isErrorPopupOpen, setIsErrorPopupOpen] = React.useState(false)
     const [selectedCard, setSelectedCard] = React.useState({})
     const [currentUser, setCurrentUser] = React.useState({name: '', about: '', avatar: '', _id: ''})
     const [cards, setCards] = React.useState([])
@@ -38,13 +40,17 @@ function App() {
                 })))
             );
             }
-        )
+        ).catch(err => {
+            errorHandler(err)
+        })
     }, [])
 
     const handleUpdateUser = (value) => {
         api.setProfileInfo(value).then((newCurrentUser) => {
             setCurrentUser(newCurrentUser)
             closeAllPopups()
+        }).catch(err => {
+            errorHandler(err)
         })
     }
 
@@ -52,13 +58,26 @@ function App() {
         api.setAvatarInfo(value).then((newCurrentUser) => {
             setCurrentUser(newCurrentUser)
             closeAllPopups()
+        }).catch(err => {
+            errorHandler(err)
         })
     }
     const handleAddPlaceSubmit = (card) => {
         api.setCard(card).then((newCard) => {
             setCards([newCard, ...cards])
             closeAllPopups()
+        }).catch(err => {
+            errorHandler(err)
         })
+    }
+    const handleErrorSubmit = () => {
+        closeAllPopups()
+    }
+
+    const errorHandler = (err) => {
+        closeAllPopups()
+        console.log(err)
+        handleErrorOpen()
     }
 
     const handleCardClick = ({name, link}) => {
@@ -71,6 +90,8 @@ function App() {
             api.delCard(card._id).then(() => {
                 const newCards = cards.filter(delCard => delCard._id !==  card._id)
                 setCards(newCards)
+            }).catch(err => {
+                errorHandler(err)
             })
         }
 
@@ -81,11 +102,18 @@ function App() {
         api.apiLike(card._id, !isLiked).then((newCard) => {
             const newCards = cards.map((oldCard) => oldCard._id === card._id ? newCard : oldCard);
             setCards(newCards);
+        }).catch(err => {
+            errorHandler(err)
         });
     }
 
     const handleEditAvatarClick = () => {
         setIsEditAvatarPopupOpen(true)
+
+    }
+
+    const handleErrorOpen = () => {
+        setIsErrorPopupOpen(true)
 
     }
 
@@ -101,6 +129,7 @@ function App() {
         setIsEditAvatarPopupOpen(false)
         setIsEditProfilePopupOpen(false)
         setIsAddPlacePopupOpen(false)
+        setIsErrorPopupOpen(false)
         setSelectedCard({})
     }
 
@@ -125,12 +154,13 @@ function App() {
                 />
 
                 < EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
-                                   onUpdateUser={handleUpdateUserAvatar}
+                                  onUpdateAvatar={handleUpdateUserAvatar}
                 />
                 < AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}
                                   onAddPlace={handleAddPlaceSubmit}
                 />
 
+                < ErrorKeeperPopup isOpen={isErrorPopupOpen} onClose={closeAllPopups} onSubmit={handleErrorSubmit}/>
 
                 < ImagePopup
                     card={selectedCard}
@@ -143,15 +173,9 @@ function App() {
                     submitButton={'Да'}
                     isOpen={false}
                     onClose={closeAllPopups}
+
                 />
 
-                < PopupWithForm
-                    name={'error'}
-                    title={'Пролизошла ошибка'}
-                    submitButton={'Ok'}
-                    isOpen={false}
-                    onClose={closeAllPopups}
-                />
             </currentUserContext.Provider>
             </cardContext.Provider>
         </>
