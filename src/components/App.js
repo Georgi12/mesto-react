@@ -1,17 +1,21 @@
 import '../index.css';
-import React from 'react';
+import React  from 'react';
+import { Route, Switch, useHistory } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute';
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import PopupWithForm from './PopupWithForm';
 import ImagePopup from './ImagePopup';
-import api from "../utils/api";
+import {api, authApi} from "../utils/api";
 import {CurrentUserContext} from "../contexts/currentUserContexts"
 import {CardContext} from "../contexts/CardContext"
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ErrorKeeperPopup from './ErrorKeeperPopup';
+import Login from "./Login";
+import Register from "./Register";
 
 
 function App() {
@@ -23,7 +27,17 @@ function App() {
     const [selectedCard, setSelectedCard] = React.useState({})
     const [currentUser, setCurrentUser] = React.useState({name: '', about: '', avatar: '', _id: ''})
     const [cards, setCards] = React.useState([])
+    const [loggedIn, setLoggedIn] = React.useState(false)
+    const [headerEmail, setHeaderEmail] = React.useState('')
+    const history = useHistory()
+
+
+    React.useEffect( () => {
+        handleTokenCheck()
+    },[])
+
     React.useEffect(() => {
+        if (!loggedIn) return
         Promise.all(
             [api.getProfileInfo(),api.getCards()]
         ).then(([updatedUser, initialCards]) => {
@@ -33,7 +47,7 @@ function App() {
         ).catch(err => {
             errorHandler(err)
         })
-    }, [])
+    }, [loggedIn])
 
     const handleUpdateUser = (value) => {
         api.setProfileInfo(value).then((newCurrentUser) => {
@@ -43,6 +57,7 @@ function App() {
             errorHandler(err)
         })
     }
+
 
     const handleUpdateUserAvatar = (value) => {
         api.setAvatarInfo(value).then((newCurrentUser) => {
@@ -97,6 +112,36 @@ function App() {
         });
     }
 
+    const handleSignOut = () => {
+        localStorage.removeItem('jwt')
+        setHeaderEmail('')
+        setLoggedIn(false)
+        history.push('/sign-in')
+    }
+
+
+    const handleLogin = () => {
+        setLoggedIn(true)
+    }
+
+    const handleTokenCheck = () => {
+        if (localStorage.getItem('jwt')){
+            let jwt = localStorage.getItem('jwt')
+            authApi.checkToken(jwt)
+                .then((res) => {
+                    if(res) {
+                        setLoggedIn(true)
+                        setHeaderEmail(res.data.email)
+                        history.push('/')
+                    }
+                })
+                .catch(err => {
+                    errorHandler(err)
+                });
+        }
+    }
+
+
     const handleEditAvatarClick = () => {
         setIsEditAvatarPopupOpen(true)
 
@@ -123,34 +168,56 @@ function App() {
         setSelectedCard({})
     }
 
-
     return (
         <>
             <CardContext.Provider value={cards}>
             <CurrentUserContext.Provider value={currentUser}>
-                < Header />
-                < Main
-                    onAddPlace={handleAddPlaceClick}
-                    onEditAvatar={handleEditAvatarClick}
-                    onEditProfile={handleEditProfileClick}
-                    onCardClick={handleCardClick}
-                    onCardLike={handleCardLike}
-                    onCardDelete={handleCardDelete}
-                />
+
+                < Header headerEmail={headerEmail} signOut={handleSignOut}/>
+                <Switch>
+                    <Route path='/sign-in'>
+                        <Login errorHandler={errorHandler} handleLogin={handleLogin}/>
+                    </Route>
+                    <Route path='/sign-up'>
+                        <Register errorHandler={errorHandler} />
+                    </Route>
+                        <ProtectedRoute
+                            path="/"
+                            Component={Main}
+                            loggedIn={loggedIn}
+                            onAddPlace={handleAddPlaceClick}
+                            onEditAvatar={handleEditAvatarClick}
+                            onEditProfile={handleEditProfileClick}
+                            onCardClick={handleCardClick}
+                            onCardLike={handleCardLike}
+                            onCardDelete={handleCardDelete}
+                        />
+                </Switch>
                 < Footer />
 
-                < EditProfilePopup isOpen={isEditProfilePopupOpen} onClose={closeAllPopups}
-                                   onUpdateUser={handleUpdateUser}
+                < EditProfilePopup
+                    isOpen={isEditProfilePopupOpen}
+                    onClose={closeAllPopups}
+                    onUpdateUser={handleUpdateUser}
                 />
 
-                < EditAvatarPopup isOpen={isEditAvatarPopupOpen} onClose={closeAllPopups}
-                                  onUpdateAvatar={handleUpdateUserAvatar}
-                />
-                < AddPlacePopup isOpen={isAddPlacePopupOpen} onClose={closeAllPopups}
-                                  onAddPlace={handleAddPlaceSubmit}
+                < EditAvatarPopup
+                    isOpen={isEditAvatarPopupOpen}
+                    onClose={closeAllPopups}
+                    onUpdateAvatar={handleUpdateUserAvatar}
                 />
 
-                < ErrorKeeperPopup isOpen={isErrorPopupOpen} onClose={closeAllPopups} onSubmit={handleErrorSubmit}/>
+                < AddPlacePopup
+                    isOpen={isAddPlacePopupOpen}
+                    onClose={closeAllPopups}
+                    onAddPlace={handleAddPlaceSubmit}
+                />
+
+                < ErrorKeeperPopup
+                    isOpen={isErrorPopupOpen}
+                    onClose={closeAllPopups}
+                    onSubmit={handleErrorSubmit}
+                />
 
                 < ImagePopup
                     card={selectedCard}
@@ -163,7 +230,6 @@ function App() {
                     submitButton={'Да'}
                     isOpen={false}
                     onClose={closeAllPopups}
-
                 />
 
             </CurrentUserContext.Provider>
